@@ -14,9 +14,10 @@
 
 const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:8002";
 const STANDALONE_CHAT_URL = process.env.REACT_APP_CHAT_URL || "";
+
 // Same root cause applies here — fixed for consistency so this doesn't
 // become the next B-2-shaped bug once someone actually sets this var.
-const STANDALONE_CHAT_URL = import.meta.env.VITE_CHAT_URL || "";
+//const STANDALONE_CHAT_URL = import.meta.env.VITE_CHAT_URL || "";
 const REQUEST_TIMEOUT_MS = 45000;
 
 function getChatEndpoint() {
