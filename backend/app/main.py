@@ -8,7 +8,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.routing import Mount, Route
 from starlette.responses import JSONResponse
 
-from backend.app.routes import chat
+from app.routes import chat
 
 # ✅ SECURITY ARCHITECT UPDATE: Define allowed domains explicitly.
 # B-1 FIX: the placeholder "https://your-calculus-website.com" was never
