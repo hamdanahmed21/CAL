@@ -12,15 +12,14 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 
 # from auth_utils import require_user
-from backend.app.auth.auth_utils import require_user
+from app.auth.auth_utils import require_user
 # from db import fetchone, fetchall, execute, scalar
-from backend.app.database.db import (
+from app.database.db import (
     fetchone, fetchall, execute, scalar,
     upsert_feedback, get_feedback_for_message,  # CB-12
     get_topic_progress, get_all_topic_progress,  # CB-18
     record_topic_message, record_topic_feedback,  # CB-18
 )
-
 # Configuration for aiService
 AI_SERVICE_URL = "http://127.0.0.1:8001"  # aiService chatbot.py runs on port 8001
 
