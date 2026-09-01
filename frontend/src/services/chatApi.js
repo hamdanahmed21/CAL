@@ -204,56 +204,8 @@ export async function sendMessageStream(
   }
 }
 
-/**
- * createChatSession — CB-13
- * Creates a new backend session for logged-in users. Guests skip this
- * (handled by caller) since guest sessions aren't persisted.
- * NOTE: relies on POST {API_URL}/api/chat/sessions — confirm with backend
- * owner whether this route exists yet.
- */
-export async function createChatSession(token, title = "New Chat") {
-  if (!token) return null;
-  try {
-    const response = await fetchWithTimeout(`${API_URL}/api/chat/sessions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ title }),
-    });
-    if (!response.ok) return null;
-    const data = await response.json();
-    return data.session_id || data.id || null;
-  } catch {
-    return null; // fail silently — local reset still works
-  }
-}
-export async function fetchChatHistory(token) {
-  if (!token) return [];
 
-  let response;
-  try {
-    response = await fetchWithTimeout(`${API_URL}/api/chat/history`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-  } catch (err) {
-    if (err.message.includes("taking too long")) throw err;
-    throw new Error("Could not reach the backend server.");
-  }
 
-  if (!response.ok) {
-    if (response.status === 401) throw new Error("Session expired. Please log in again.");
-    throw new Error("Failed to load chat history.");
-  }
-
-  try {
-    const data = await response.json();
-    return data.history || data.sessions || [];
-  } catch {
-    return [];
-  }
-}
 
 /**
  * fetchTopicProgress — CB-18
