@@ -22,6 +22,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Toggle between mock and OpenAI
 USE_MOCK = os.getenv("USE_MOCK", "True").lower() == "true"
+logging.warning(f"STARTUP_CONFIG: USE_MOCK={USE_MOCK} (raw env value: {os.getenv('USE_MOCK')!r})")
 
 # ─────────────────────────────────────────────────────────────
 # CB-20: Model Fallback & Response Caching — configuration
