@@ -467,7 +467,7 @@ async def ask_openai(
         try:
             response = await asyncio.wait_for(
                 client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
+                    model="openai/gpt-oss-120b",
                     messages=messages,
                     temperature=0.3,
                     max_tokens=1000
@@ -486,7 +486,7 @@ async def ask_openai(
         served_by = "fallback_mock"
         response_content = await ask_mock(message, topic, history, difficulty, summary)
 
-    logging.info(f"LLM_RESPONSE_SOURCE: served_by={served_by} model={'llama-3.3-70b-versatile' if served_by == 'primary' else 'mock'}")
+    logging.info(f"LLM_RESPONSE_SOURCE: served_by={served_by} model={'openai/gpt-oss-120b' if served_by == 'primary' else 'mock'}")
 
     # CB-8: Scope violation detection
     # Widened to match every topic in the SCOPE section of the system
@@ -553,7 +553,7 @@ async def ask_openai_stream(
         try:
             stream = await asyncio.wait_for(
                 client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
+                    model="openai/gpt-oss-120b",
                     messages=messages,
                     temperature=0.3,
                     max_tokens=1000,
@@ -569,7 +569,7 @@ async def ask_openai_stream(
                     got_any_token = True
                     yield delta
             _primary_circuit.record_success()
-            logging.info("LLM_RESPONSE_SOURCE: served_by=primary model=llama-3.3-70b-versatile (stream)")
+            logging.info("LLM_RESPONSE_SOURCE: served_by=primary model=openai/gpt-oss-120b (stream)")
             return
         except Exception as e:
             _primary_circuit.record_failure()
