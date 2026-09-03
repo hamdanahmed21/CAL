@@ -181,24 +181,38 @@ export async function sendMessageStream(
       const lines = buffer.split("\n\n");
       buffer = lines.pop(); // keep incomplete chunk for next read
 
-      for (const line of lines) {
-        if (!line.startsWith("data:")) continue;
-        const payload = line.replace(/^data:\s*/, "");
+      for (const frame of lines) {
+        // Each SSE frame may be a named event (e.g. "event: message\ndata: {...}")
+        // or a bare "data: ..." line. Split the frame into lines and process
+        // only the data: lines so that named events are not silently skipped.
+        const dataLines = frame
+          .split("\n")
+          .filter((l) => l.startsWith("data:"))
+          .map((l) => l.replace(/^data:\s*/, ""));
 
-        if (payload === "[DONE]") {
-          onDone({ suggestions, message_id, session_id });
-          return;
-        }
+        for (const payload of dataLines) {
+          if (payload === "[DONE]") {
+            onDone({ suggestions, message_id, session_id });
+            return;
+          }
 
-        try {
-          const parsed = JSON.parse(payload);
-          if (parsed.token) onToken(parsed.token);
-          if (Array.isArray(parsed.suggestions)) suggestions = parsed.suggestions;
-          if (parsed.message_id) message_id = parsed.message_id;  // CB-12
-          if (parsed.session_id) session_id = parsed.session_id;  // CB-12/CB-19
-        } catch {
-          // plain-text token fallback (not JSON-wrapped)
-          if (payload) onToken(payload);
+          try {
+            const parsed = JSON.parse(payload);
+            // Accept delta (backend stream) or token (aiService direct)
+            const chunk = parsed.delta || parsed.token || "";
+            if (chunk) onToken(chunk);
+            if (Array.isArray(parsed.suggestions)) suggestions = parsed.suggestions;
+            if (parsed.message_id) message_id = parsed.message_id;  // CB-12
+            if (parsed.session_id) session_id = parsed.session_id;  // CB-12/CB-19
+            // Handle the named "done" event payload
+            if (parsed.done) {
+              onDone({ suggestions, message_id, session_id });
+              return;
+            }
+          } catch {
+            // plain-text token fallback (not JSON-wrapped)
+            if (payload) onToken(payload);
+          }
         }
       }
     }

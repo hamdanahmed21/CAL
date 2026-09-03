@@ -21,7 +21,7 @@ from app.database.db import (
     record_topic_message, record_topic_feedback,  # CB-18
 )
 # Configuration for aiService
-AI_SERVICE_URL = "http://127.0.0.1:8001"  # aiService chatbot.py runs on port 8001
+#AI_SERVICE_URL = "http://127.0.0.1:8001"  # aiService chatbot.py runs on port 8001
 
 # ── T5: SSE Streaming Tunables ────────────────────────────────────────────────
 # FLUSH_INTERVAL bounds how long a token can sit before being sent to the
