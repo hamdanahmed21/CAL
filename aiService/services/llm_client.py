@@ -15,7 +15,7 @@ env_path = Path(__file__).parent / ".env"
 load_dotenv(dotenv_path=env_path)
 
 # Now you can get your API keys securely
-GROK_API_KEY = os.getenv("GROK_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -290,10 +290,10 @@ def _build_system_content(topic: str, difficulty: str) -> str:
     return system_content
 
 
-# Create OpenAI client (primary — xAI/Grok)
+# Create OpenAI-compatible client (primary — Groq)
 client = AsyncOpenAI(
-    api_key=os.getenv("GROK_API_KEY"),
-    base_url="https://api.x.ai/v1"
+    api_key=os.getenv("GROQ_API_KEY"),
+    base_url="https://api.groq.com/openai/v1"
 )
 
 
@@ -466,7 +466,7 @@ async def ask_openai(
         try:
             response = await asyncio.wait_for(
                 client.chat.completions.create(
-                    model="grok-3-mini",
+                    model="llama-3.3-70b-versatile",
                     messages=messages,
                     temperature=0.3,
                     max_tokens=1000
@@ -485,7 +485,7 @@ async def ask_openai(
         served_by = "fallback_mock"
         response_content = await ask_mock(message, topic, history, difficulty, summary)
 
-    logging.info(f"LLM_RESPONSE_SOURCE: served_by={served_by} model={'grok-3-mini' if served_by == 'primary' else 'mock'}")
+    logging.info(f"LLM_RESPONSE_SOURCE: served_by={served_by} model={'llama-3.3-70b-versatile' if served_by == 'primary' else 'mock'}")
 
     # CB-8: Scope violation detection
     # Widened to match every topic in the SCOPE section of the system
@@ -552,7 +552,7 @@ async def ask_openai_stream(
         try:
             stream = await asyncio.wait_for(
                 client.chat.completions.create(
-                    model="grok-3-mini",
+                    model="llama-3.3-70b-versatile",
                     messages=messages,
                     temperature=0.3,
                     max_tokens=1000,
@@ -568,7 +568,7 @@ async def ask_openai_stream(
                     got_any_token = True
                     yield delta
             _primary_circuit.record_success()
-            logging.info("LLM_RESPONSE_SOURCE: served_by=primary model=grok-3-mini (stream)")
+            logging.info("LLM_RESPONSE_SOURCE: served_by=primary model=llama-3.3-70b-versatile (stream)")
             return
         except Exception as e:
             _primary_circuit.record_failure()
@@ -646,7 +646,7 @@ async def summarize_history(messages: list, previous_summary: str = "") -> str:
     content = f"Previous summary: {previous_summary}\n\n" if previous_summary else ""
     content += "\n".join(f"{m['role']}: {m['content']}" for m in messages)
     response = await client.chat.completions.create(
-        model="grok-3-mini",
+        model="llama-3.3-70b-versatile",
         messages=[
             {"role": "system", "content": SUMMARY_PROMPT},
             {"role": "user", "content": content},

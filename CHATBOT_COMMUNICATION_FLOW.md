@@ -1240,7 +1240,7 @@ services:
     ports:
       - "8001:8001"
     environment:
-      - GROK_API_KEY=${GROK_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
       - USE_MOCK=False
       - PRIMARY_TIMEOUT_SECONDS=12
       - LLM_CACHE_TTL_SECONDS=300

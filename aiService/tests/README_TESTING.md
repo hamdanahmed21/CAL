@@ -3,7 +3,7 @@
 ## Running the Tests
 
 # 1. Set USE_MOCK = False in llm_client.py
-# 2. Make sure GROK_API_KEY is set in aiService/services/.env
+# 2. Make sure GROQ_API_KEY is set in aiService/services/.env
 # 3. From the project root:
 
 python -m aiService.tests.chatbot_tests
@@ -17,7 +17,7 @@ pip install -r aiService/requirements.txt
 
 # 2. Configure environment
 # Edit aiService/services/.env and add:
-GROK_API_KEY=xai-your-actual-key-here
+GROQ_API_KEY=gsk_your-actual-key-here
 
 # 3. Enable real API testing
 # Edit aiService/services/llm_client.py line 12:
@@ -160,7 +160,7 @@ USE_MOCK = False  # Make sure this is False, not True
 
 **Solution**:
 1. Check `.env` file location: `aiService/services/.env`
-2. Verify GROK_API_KEY is set correctly
+2. Verify GROQ_API_KEY is set correctly
 3. Ensure no extra spaces or quotes around the key
 
 ### Import Errors
@@ -183,9 +183,9 @@ python -m aiService.tests.chatbot_tests
 ## Cost Considerations
 
 - **Total API calls**: 30 (20 calculus + 10 off-topic)
-- **Model**: grok-3-mini
+- **Model**: llama-3.3-70b-versatile
 - **Max tokens per call**: 1000
-- **Estimated cost**: Check xAI pricing for current rates
+- **Estimated cost**: Check Groq pricing at console.groq.com
 
 To minimize costs during development:
 - Use `USE_MOCK = True` for code testing

@@ -4,14 +4,14 @@ Full-stack adaptive learning platform for multivariable calculus with AI tutorin
 
 ## Quick Start
 
-**Prerequisites:** Python 3.11+, Node.js 18+, xAI Grok API key
+**Prerequisites:** Python 3.11+, Node.js 18+, Groq API key (console.groq.com)
 
 **Setup:**
 ```bash
 # Backend
 pip install -r aiService/requirements.txt backend/requirements.txt
 mkdir -p aiService/services
-echo "GROK_API_KEY=your_key_here\nUSE_MOCK=False" > aiService/services/.env
+echo "GROQ_API_KEY=your_key_here\nUSE_MOCK=False" > aiService/services/.env
 
 # Frontend
 cd frontend && npm install --force
@@ -34,7 +34,7 @@ Visit `http://localhost:3000`
 ## Architecture
 
 ```
-React Frontend → Starlette Backend → FastAPI AI Service → Grok LLM
+React Frontend → Starlette Backend → Starlette AI Service → Groq LLM (llama-3.3-70b-versatile)
                         ↓
                     SQLite DB
 ```
@@ -67,7 +67,7 @@ React Frontend → Starlette Backend → FastAPI AI Service → Grok LLM
 
 **AI Service (.env):**
 ```
-GROK_API_KEY=xai_...           # xAI API key
+GROQ_API_KEY=gsk_...           # Groq API key (console.groq.com)
 USE_MOCK=False                  # True for testing without API
 CIRCUIT_FAILURE_THRESHOLD=3     # Failures before circuit opens
 CIRCUIT_RESET_SECONDS=60        # Time before retry
@@ -91,7 +91,7 @@ pytest aiService/tests/test_cb12_feedback.py -v
 
 # GitHub Actions runs:
 # - PR: mock tests on Python 3.11, 3.12
-# - Nightly: real API tests with Grok key
+# - Nightly: real API tests with Groq key
 # - Thresholds: CB-8 ≥10/10 scope, CB-9 ≥16/20 correctness
 ```
 
