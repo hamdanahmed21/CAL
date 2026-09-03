@@ -22,6 +22,8 @@ from app.database.db import (
 )
 # Configuration for aiService
 #AI_SERVICE_URL = "http://127.0.0.1:8001"  # aiService chatbot.py runs on port 8001
+import os
+AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "http://127.0.0.1:8001")
 
 # ── T5: SSE Streaming Tunables ────────────────────────────────────────────────
 # FLUSH_INTERVAL bounds how long a token can sit before being sent to the
