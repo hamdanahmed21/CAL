@@ -5,7 +5,7 @@ import "katex/dist/katex.min.css";
 
 function parseLatex(text) {
   const segments = [];
-  const regex = /(\$\$[\s\S]+?\$\$|\$[^$\n]+?\$)/g;
+  const regex = /(\$\$[\s\S]+?\$\$|\\\[[\s\S]+?\\\]|\$[^$\n]+?\$|\\\([\s\S]+?\\\))/g;
   let lastIndex = 0;
   let match;
 
@@ -16,6 +16,10 @@ function parseLatex(text) {
     const raw = match[0];
     if (raw.startsWith("$$")) {
       segments.push({ type: "block", content: raw.slice(2, -2).trim() });
+    } else if (raw.startsWith("\\[")) {
+      segments.push({ type: "block", content: raw.slice(2, -2).trim() });
+    } else if (raw.startsWith("\\(")) {
+      segments.push({ type: "inline", content: raw.slice(2, -2).trim() });
     } else {
       segments.push({ type: "inline", content: raw.slice(1, -1).trim() });
     }
