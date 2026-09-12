@@ -33,6 +33,16 @@ function parseLatex(text) {
   return segments;
 }
 
+function renderBoldText(text, keyPrefix) {
+  const parts = text.split(/(\*\*[^*]+?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
+      return <strong key={`${keyPrefix}-b${i}`}>{part.slice(2, -2)}</strong>;
+    }
+    return part ? <span key={`${keyPrefix}-t${i}`}>{part}</span> : null;
+  });
+}
+
 function KatexSpan({ latex, displayMode }) {
   const ref = useRef(null);
   useEffect(() => {
@@ -100,10 +110,11 @@ function BotMessageContent({ content }) {
               const key = `b${bIdx}-s${sIdx}`;
               if (seg.type === "inline") return <KatexSpan key={key} latex={seg.content} displayMode={false} />;
               if (seg.type === "block") return <KatexSpan key={key} latex={seg.content} displayMode={true} />;
-              // Plain text segment: preserve internal newlines as <br>
+             // Plain text segment: preserve internal newlines as <br>, and render
+              // **bold** markdown as actual <strong> text
               return seg.content.split("\n").map((textLine, tIdx, arr) => (
                 <span key={`${key}-${tIdx}`}>
-                  {textLine}
+                  {renderBoldText(textLine, `${key}-${tIdx}`)}
                   {tIdx < arr.length - 1 && <br />}
                 </span>
               ));
