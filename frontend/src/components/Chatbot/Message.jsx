@@ -90,21 +90,30 @@ function BotMessageContent({ content }) {
           );
         }
 
+        // Parse LaTeX on the WHOLE block first, so multi-line \[...\] / $$...$$
+        // spans are matched as single segments before we ever split on "\n".
+        const segments = parseLatex(block);
+
         return (
           <p key={bIdx} className="cb-msg-paragraph">
-            {lines.map((line, lIdx) => (
-              <span key={lIdx}>
-                {renderLatexSegments(line, `b${bIdx}-l${lIdx}`)}
-                {lIdx < lines.length - 1 && <br />}
-              </span>
-            ))}
+            {segments.map((seg, sIdx) => {
+              const key = `b${bIdx}-s${sIdx}`;
+              if (seg.type === "inline") return <KatexSpan key={key} latex={seg.content} displayMode={false} />;
+              if (seg.type === "block") return <KatexSpan key={key} latex={seg.content} displayMode={true} />;
+              // Plain text segment: preserve internal newlines as <br>
+              return seg.content.split("\n").map((textLine, tIdx, arr) => (
+                <span key={`${key}-${tIdx}`}>
+                  {textLine}
+                  {tIdx < arr.length - 1 && <br />}
+                </span>
+              ));
+            })}
           </p>
         );
       })}
     </div>
   );
 }
-
 function MessageFeedback({ className = "", messageId = null, sessionId = null, userToken = null }) {
   const [feedback, setFeedback] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
